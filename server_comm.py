@@ -10,7 +10,7 @@ from RSA import RSACipher
 
 
 class ServerComm():
-    def __init__(self, port, recvQ, worldObject):
+    def __init__(self, port, recvQ):
         """
         establishes connection to the client
         :param port: the port
@@ -20,7 +20,6 @@ class ServerComm():
         self.server = socket.socket()
         self.recvQ = recvQ
         # 1. Generate the key pair
-        self.worldObject = worldObject
 
         # 2. Initialize the class with that key to enable encryption/decryption
         self.my_private_cipher = RSACipher()
