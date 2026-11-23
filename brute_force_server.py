@@ -12,7 +12,7 @@ port = 5000
 def unpack(data):
     pass
 
-def handle_recv_msgs(comm, recvQ, ):
+def handle_recv_msgs(comm, recvQ, hash):
     """
     handles all the msgs from user
     :param comm: teh object to use form communication
@@ -27,7 +27,9 @@ def handle_recv_msgs(comm, recvQ, ):
         # print(data)
         #splits data to opcode and params
         opcode, params = unpack(data)
-        print(opcode)
+        if opcode == 1:
+
+
 
 
 if __name__ == '__main__':
@@ -39,6 +41,7 @@ if __name__ == '__main__':
     print("listing...")
     server_comm = ServerComm(1001, receivingQ)
     threading.Thread(target=handle_recv_msgs, args=(server_comm, receivingQ)).start()
+
 
 
 

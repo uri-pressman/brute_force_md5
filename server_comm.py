@@ -78,35 +78,16 @@ class ServerComm():
 
     def _close_client(self, client_soc):
         """
-        closes the client sock
-        :param client_soc: the client sock
-        :return:
+        Closes a single client socket and removes it from open_clients.
+        :param client_soc: the client socket to close
         """
-        #checks if the client is in the dict of open clients
-
-        if client_soc in self.open_clients.keys():
-            #delets the client if exists and closes the socket
-            #if world created closes all clients connected
-            if self.worldObject.world_created:
-                for player in self.worldObject.current_players.values():
-                    ip = player["ipAndKey"]
-
-                    current_soc = self._find_soc_by_ip(ip)
-                    # if not the original one closing
-                    if current_soc != client_soc:
-                        self.send_msg(ip, "z")
-                        current_soc.close()
-                        del self.open_clients[current_soc]
+        if client_soc in self.open_clients:
+            try:
                 client_soc.close()
-                del self.open_clients[client_soc]
-                self.recvQ.put((None, "z"))
-                self.closeServer()
-                exit()
-
-            else:
-                print("deleted from open clients")
-                del self.open_clients[client_soc]
-                client_soc.close()
+            except Exception as e:
+                print(f"Error closing client socket: {e}")
+            del self.open_clients[client_soc]
+            print("Deleted client from open_clients")
 
     def closeServer(self):
         self.server.close()
@@ -155,15 +136,6 @@ class ServerComm():
                 self._close_client(sock)
         print("sent================")
 
-    def broadCast_msg(self, msg):
-        """
-        sends a msg to all the connected players
-        :param msg: the msg to send
-        :return:
-        """
-        for player in self.worldObject.current_players.values():
-            full_ip = player["ipAndKey"]  # gets the (ip, RsaKey) tuple
-            self.send_msg(full_ip, msg)
 
     def exchangeKeys(self, client, addr):
         """
