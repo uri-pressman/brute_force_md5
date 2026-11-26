@@ -49,6 +49,7 @@ class ServerComm():
                     client, addr = self.server.accept()
                     #exchanges public keys
                     threading.Thread(target=self.exchangeKeys, args=(client, addr)).start()
+                    self.recvQ.put(f"2${self.open_clients[current_sock]}")
 
                 else:
                     try:

@@ -15,18 +15,23 @@ def finder(ip, port, thead_id):
     """
 
     recvQ = queue.Queue
-    comm = ClientComm(ip, port, recvQ)
-    hash = recvQ.get
-    chunk = str(recvQ.get)
+    comm_worker = ClientComm(ip, port, recvQ)
+    found = False
+    while not found:
+        try:
+            hash = recvQ.get
+            chunk = str(recvQ.get)
+        except Exception as e:
+            pass
 
-    for n in range(int(chunk)):
-
-        digest = hashlib.md5(str(n).encode("utf-8")).hexdigest()
-        if digest == hash:
-            comm.send_msg(f"1${n}")
-        else:
-            comm.send_msg(0)
-
+    # for n in range(int(chunk)):
+    #
+    #     digest = hashlib.md5(str(n).encode("utf-8")).hexdigest()
+    #     if digest == hash:
+    #         comm.send_msg(f"1${digest}")
+    #     else:
+    #         comm.send_msg(0)
+    #
 
 
 
@@ -37,10 +42,14 @@ if __name__ == '__main__':
 
     logical_cores = os.cpu_count()
     print("Logical cores:", logical_cores)
-
+    port = 1155
+    host = "127.0.0.1"
     # establishes connection to server and starts queue for server msgs
-    comm = ClientComm("127.0.0.1", 1001, recvQ)
-    threading.Thread(target=handle_recv_msgs, args=(recvQ, ), daemon=True).start()
+    for i in range(4):
+        threading.Thread(target=finder(host, port, i))
+
+    # comm = ClientComm("127.0.0.1", 1001, recvQ)
+    # threading.Thread(target=finder, args=(recvQ, ), daemon=True).start()
 
 
 
